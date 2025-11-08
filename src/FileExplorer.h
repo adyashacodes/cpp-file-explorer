@@ -4,32 +4,25 @@
 #include <string>
 #include <vector>
 
-// This class encapsulates all the logic for our file explorer [cite: 2931-2938]
 class FileExplorer {
 public:
-    // Constructor: Initializes the explorer [cite: 3056-3061]
     FileExplorer();
-    
-    // Main loop for the application
     void run();
 
 private:
-    std::string current_path; // The directory we are currently in
+    std::string current_path;
     bool running;
 
     // --- Core Methods ---
-    
-    // Prints the prompt (e.g., /home/uvaers$ )
     void printPrompt();
-    
-    // Reads and parses the user's input
-    std::vector<std::string> parseInput();
-    
-    // Executes the given command
+    // --- THIS LINE IS NOW FIXED (was std.vector) ---
+    std::vector<std::string> parseInput(); 
     void executeCommand(const std::vector<std::string>& args);
     
-    // --- Day 1 Function ---
+    // --- Command Functions ---
     void listDirectory();
+    void changeDirectory(const std::vector<std::string>& args); 
+    void showHelp(); 
 };
 
 #endif // FILE_EXPLORER_H

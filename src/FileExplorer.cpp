@@ -6,19 +6,29 @@
 #include <unistd.h>     // For chdir(), getcwd()
 #include <cstdlib>      // For system()
 #include <filesystem>   // For canonical()
+#include <limits.h>     // For PATH_MAX
 
 // Constructor
 FileExplorer::FileExplorer() {
     this->running = true;
-    // Set the initial path to the user's home directory
-    this->current_path = getenv("HOME");
-    // Change the program's directory to home
+    
+    // Get the user's home directory
+    const char* home_dir = getenv("HOME");
+    if (home_dir != nullptr) {
+        this->current_path = home_dir;
+    } else {
+        // Fallback if HOME is not set
+        this->current_path = "/";
+    }
+    
+    // Change the program's working directory
     chdir(this->current_path.c_str());
 }
 
 // Main application loop
 void FileExplorer::run() {
-    // Show the initial file list
+    // We run 'clear' and 'ls' once at the start
+    system("clear");
     listDirectory();
 
     while (this->running) {
@@ -26,7 +36,7 @@ void FileExplorer::run() {
         std::vector<std::string> args = parseInput();
         
         if (args.empty()) {
-            continue; // Show prompt again
+            continue;
         }
         
         executeCommand(args);
@@ -46,6 +56,7 @@ std::vector<std::string> FileExplorer::parseInput() {
     std::string line;
     std::getline(std::cin, line);
     
+    // --- THIS LINE IS NOW FIXED (was std.vector) ---
     std::vector<std::string> args;
     std::stringstream ss(line);
     std::string word;
@@ -66,25 +77,71 @@ void FileExplorer::executeCommand(const std::vector<std::string>& args) {
     
     if (command == "ls") {
         listDirectory();
-    } 
-    // Handle 'exit'
+    }
+    else if (command == "cd") { // <-- NEW FOR DAY 2
+        changeDirectory(args);
+        // After changing directory, list the contents
+        listDirectory();
+    }
+    else if (command == "help") { // <-- NEW FOR DAY 2
+        showHelp();
+    }
     else if (command == "exit") {
         this->running = false;
     }
-    // Handle 'clear'
     else if (command == "clear") {
         system("clear");
+        listDirectory(); // Show files after clearing
     }
     else {
         std::cout << "Unknown command: " << command << std::endl;
-        std::cout << "Available: ls, exit, clear" << std::endl;
+        std::cout << "Type 'help' for a list of commands." << std::endl;
     }
 }
 
-// --- Day 1 Function ---
-// Interfaces with the 'ls' command [cite: 2426]
+// --- Command Functions ---
+
+// Interfaces with the 'ls' command
 void FileExplorer::listDirectory() {
-    // We use "ls -l --color=auto" for a nice, readable list
-    // system() executes a shell command
     system("ls -l --color=auto");
+}
+
+// --- NEW FOR DAY 2 ---
+// Changes the current working directory
+void FileExplorer::changeDirectory(const std::vector<std::string>& args) {
+    std::string path;
+    
+    if (args.size() < 2 || args[1] == "~") {
+        // 'cd' or 'cd ~' goes to home
+        path = getenv("HOME");
+    } else {
+        path = args[1];
+    }
+    
+    // Use chdir() to change directory
+    if (chdir(path.c_str()) != 0) {
+        // chdir() failed
+        perror("cd");
+    } else {
+        // chdir() was successful, update our path variable
+        char cwd[PATH_MAX];
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            this->current_path = cwd;
+        } else {
+            perror("getcwd");
+        }
+    }
+}
+
+// --- NEW FOR DAY 2 ---
+// Shows the help menu
+void FileExplorer::showHelp() {
+    std::cout << "--- C++ File Explorer Help ---" << std::endl;
+    std::cout << "Available commands:" << std::endl;
+    std::cout << "  ls          - List files in the current directory" << std::endl;
+    std::cout << "  cd <dir>    - Change directory (e.g., 'cd ..', 'cd /var/log')" << std::endl;
+    std::cout << "  clear       - Clear the terminal screen" << std::endl;
+    std::cout << "  help        - Show this help menu" << std::endl;
+    std::cout << "  exit        - Quit the explorer" << std::endl;
+    std::cout << "--------------------------------" << std::endl;
 }
