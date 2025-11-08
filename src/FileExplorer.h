@@ -28,9 +28,10 @@ private:
     void deleteItem(const std::vector<std::string>& args);
     void createFile(const std::vector<std::string>& args);
     void createDirectory(const std::vector<std::string>& args);
-    
-    // --- NEW FOR DAY 4 ---
     void searchFiles(const std::vector<std::string>& args);
+    
+    // --- NEW FOR DAY 5 ---
+    void changePermissions(const std::vector<std::string>& args);
 };
 
 #endif // FILE_EXPLORER_H
