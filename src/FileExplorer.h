@@ -15,14 +15,21 @@ private:
 
     // --- Core Methods ---
     void printPrompt();
-    // --- THIS LINE IS NOW FIXED (was std.vector) ---
-    std::vector<std::string> parseInput(); 
+    std::vector<std::string> parseInput();
     void executeCommand(const std::vector<std::string>& args);
     
     // --- Command Functions ---
     void listDirectory();
-    void changeDirectory(const std::vector<std::string>& args); 
-    void showHelp(); 
+    void changeDirectory(const std::vector<std::string>& args);
+    void showHelp();
+    
+    // --- NEW FOR DAY 3 ---
+    void copyItem(const std::vector<std::string>& args);
+    void moveItem(const std::vector<std::string>& args);
+    void deleteItem(const std::vector<std::string>& args);
+    void createFile(const std::vector<std::string>& args);
+    void createDirectory(const std::vector<std::string>& args);
+    std::string buildCommand(const std::vector<std::string>& args);
 };
 
 #endif // FILE_EXPLORER_H
