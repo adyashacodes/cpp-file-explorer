@@ -17,19 +17,20 @@ private:
     void printPrompt();
     std::vector<std::string> parseInput();
     void executeCommand(const std::vector<std::string>& args);
-    
+    std::string buildCommand(const std::vector<std::string>& args, int start_index = 1);
+
     // --- Command Functions ---
     void listDirectory();
     void changeDirectory(const std::vector<std::string>& args);
     void showHelp();
-    
-    // --- NEW FOR DAY 3 ---
     void copyItem(const std::vector<std::string>& args);
     void moveItem(const std::vector<std::string>& args);
     void deleteItem(const std::vector<std::string>& args);
     void createFile(const std::vector<std::string>& args);
     void createDirectory(const std::vector<std::string>& args);
-    std::string buildCommand(const std::vector<std::string>& args);
+    
+    // --- NEW FOR DAY 4 ---
+    void searchFiles(const std::vector<std::string>& args);
 };
 
 #endif // FILE_EXPLORER_H
